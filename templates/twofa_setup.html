@@ -1,1 +1,0 @@
-{% extends 'base.html' %}{% block content %}<h1>Aktifkan 2FA Master</h1><div class="card"><p>Masukkan secret ini ke Google Authenticator:</p><code>{{secret}}</code><p>URI:</p><textarea readonly>{{uri}}</textarea><form method="post"><input name="code" placeholder="Kode 6 digit" required><button>Aktifkan 2FA</button></form></div>{% endblock %}

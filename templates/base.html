@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}OMTOGEL Staff Management{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+</head>
+<body>
+<aside>
+  <div class="brand"><div class="brand-mark">O</div><div><h2>OMTOGEL</h2><small>STAFF MANAGEMENT</small></div></div>
+  <nav>
+    <a class="{% if request.endpoint=='dashboard' %}active{% endif %}" href="{{url_for('dashboard')}}">Dashboard</a>
+    {% if g.user and g.user.role!='staff' %}
+    <a class="{% if request.endpoint=='staff_page' %}active{% endif %}" href="{{url_for('staff_page')}}">Data Staf</a>
+    <a class="{% if request.endpoint=='offices_page' %}active{% endif %}" href="{{url_for('offices_page')}}">Kantor</a>
+    <a class="{% if request.endpoint=='shifts_page' %}active{% endif %}" href="{{url_for('shifts_page')}}">Master Shift</a>
+    <a class="{% if request.endpoint=='channels_page' %}active{% endif %}" href="{{url_for('channels_page')}}">Bank / Channel</a>
+    <a class="{% if request.endpoint=='assignments_page' %}active{% endif %}" href="{{url_for('assignments_page')}}">Jobdesk</a>
+    <a class="{% if request.endpoint=='monitor_page' %}active{% endif %}" href="{{url_for('monitor_page')}}">Monitor Deposit</a>
+    <a class="{% if request.endpoint=='warnings_page' %}active{% endif %}" href="{{url_for('warnings_page')}}">SP / Peringatan</a>
+    <a class="{% if request.endpoint=='former_page' %}active{% endif %}" href="{{url_for('former_page')}}">Ex Karyawan</a>
+    <a class="{% if request.endpoint=='reports_page' %}active{% endif %}" href="{{url_for('reports_page')}}">Laporan</a>
+    {% endif %}
+    <a class="{% if request.endpoint=='inout_page' %}active{% endif %}" href="{{url_for('inout_page')}}">IN / OUT</a>
+    <a class="{% if request.endpoint=='memos_page' %}active{% endif %}" href="{{url_for('memos_page')}}">Memo</a>
+    <a class="{% if request.endpoint=='account_page' %}active{% endif %}" href="{{url_for('account_page')}}">Akun Saya</a>
+    {% if g.user and g.user.role!='staff' %}<a href="{{url_for('twofa_setup')}}">Keamanan 2FA</a>{% endif %}
+  </nav>
+  <div class="side-footer"><span>{{ g.user.username if g.user else '' }}</span><a href="{{url_for('logout')}}">Logout</a></div>
+</aside>
+<main>
+  {% with m=get_flashed_messages(with_categories=true) %}{% for c,x in m %}<div class="flash {{c}}">{{x}}</div>{% endfor %}{% endwith %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

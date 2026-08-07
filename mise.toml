@@ -1,5 +1,0 @@
-[tools]
-python = "3.11.13"
-
-[settings]
-python.github_attestations = false

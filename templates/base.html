@@ -1,0 +1,33 @@
+<!doctype html><html lang="id" data-theme="{{g.theme or 'dark'}}"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}OMTOGEL Staff{% endblock %}</title><link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+</head><body>
+<aside class="sidebar"><div class="brand"><div class="brand-mark">O</div><div><h2>OMTOGEL</h2><small>STAFF MANAGEMENT</small></div></div><nav>
+<a class="{% if request.endpoint=='dashboard' %}active{% endif %}" href="{{url_for('dashboard')}}">⌂ <span>Dashboard</span></a>
+{% if g.user and g.user.role!='staff' %}
+<div class="nav-label">DATA STAF</div>
+<a class="{% if request.endpoint in ['staff_page','staff_detail'] %}active{% endif %}" href="{{url_for('staff_page')}}">♙ <span>Semua Data Staf</span></a>
+<a class="{% if request.endpoint=='staff_add_page' %}active{% endif %}" href="{{url_for('staff_add_page')}}">＋ <span>Tambah Staf</span></a>
+<a class="{% if request.endpoint=='warnings_page' %}active{% endif %}" href="{{url_for('warnings_page')}}">⚠ <span>Daftar SP Staf</span></a>
+<a class="{% if request.endpoint=='leader_reports_page' %}active{% endif %}" href="{{url_for('leader_reports_page')}}">▤ <span>Laporan Leader</span></a>
+<a class="{% if request.endpoint=='former_page' %}active{% endif %}" href="{{url_for('former_page')}}">◉ <span>Ex Karyawan</span></a>
+<div class="nav-label">OPERASIONAL</div>
+<a class="{% if request.endpoint=='operations_page' %}active{% endif %}" href="{{url_for('operations_page')}}">▦ <span>Penugasan Kerja</span></a>
+<div class="nav-label">DATA & PENGATURAN</div>
+<a class="{% if request.endpoint in ['offices_page','office_detail'] %}active{% endif %}" href="{{url_for('offices_page')}}">⌖ <span>Kantor</span></a>
+<a class="{% if request.endpoint=='channels_page' %}active{% endif %}" href="{{url_for('channels_page')}}">▧ <span>Master Jobdesk</span></a>
+<a class="{% if request.endpoint=='users_page' %}active{% endif %}" href="{{url_for('users_page')}}">⚿ <span>Pengguna & Akses</span></a>
+<a class="{% if request.endpoint=='mistakes_manage_page' %}active{% endif %}" href="{{url_for('mistakes_manage_page')}}">₿ <span>Kelola Mistake</span></a>
+<a class="{% if request.endpoint=='login_logs_page' %}active{% endif %}" href="{{url_for('login_logs_page')}}">≋ <span>Log Login Staf</span></a>
+{% if g.user.role in ['superadmin','supervisor'] %}<a class="{% if request.endpoint=='audit_page' %}active{% endif %}" href="{{url_for('audit_page')}}">⌁ <span>Audit Perubahan</span></a>{% endif %}
+{% endif %}
+<div class="nav-label">AKUN AKSES</div>
+<a class="{% if request.endpoint=='inout_page' %}active{% endif %}" href="{{url_for('inout_page')}}">⇄ <span>IN / OUT Izin Keluar</span></a>
+<a class="{% if request.endpoint=='nawala_page' %}active{% endif %}" href="{{url_for('nawala_page')}}">◎ <span>Cek Nawala</span></a>
+{% if g.user and g.user.staff_id %}<a class="{% if request.endpoint=='mistakes_page' %}active{% endif %}" href="{{url_for('mistakes_page')}}">₿ <span>Catatan Mistake Mu</span></a><a class="{% if request.endpoint=='my_history_page' %}active{% endif %}" href="{{url_for('my_history_page')}}">◷ <span>History Saya</span></a>{% endif %}
+<a class="{% if request.endpoint=='account_page' %}active{% endif %}" href="{{url_for('account_page')}}">⚙ <span>Akun Saya</span></a>
+{% if g.user and g.user.role!='staff' %}<a href="{{url_for('twofa_setup')}}">◆ <span>Keamanan 2FA</span></a>{% endif %}
+</nav><div class="side-footer"><div><b>{{g.user.username if g.user else ''}}</b><small>{{g.user.role|upper if g.user else ''}}</small></div><a href="{{url_for('logout')}}">Logout</a></div></aside>
+<main><header class="topbar"><div><strong>{% block page_title %}Dashboard{% endblock %}</strong><small>OMTOGEL Staff Management System</small></div><div class="top-actions"><a class="theme-mini" href="{{url_for('set_theme',mode='light' if (g.theme or 'dark')=='dark' else 'dark')}}">{{'☀' if (g.theme or 'dark')=='dark' else '☾'}}</a><div class="user-pill"><span class="avatar">{{(g.user.username[0]|upper) if g.user else 'O'}}</span><div><b>{{g.user.username if g.user else ''}}</b><small>{{g.user.role|upper if g.user else ''}}</small></div></div></div></header>
+{% with m=get_flashed_messages(with_categories=true) %}{% for c,x in m %}<div class="flash {{c}}">{{x}}</div>{% endfor %}{% endwith %}{% block content %}{% endblock %}</main>
+{% if g.user and g.policy_pending %}<div class="policy-backdrop"><section class="policy-modal"><div class="policy-head"><div class="warning-icon">!</div><div><h2>PERATURAN KANTOR</h2><strong>WAJIB DIBACA DAN DIPATUHI</strong></div></div><ol class="policy-list"><li>Dilarang keras Dugem, Judi dan narkoba.</li><li>Dilarang membuka sosmed untuk kepentingan pribadi, nonton YouTube, FB pribadi, IG pribadi di komputer kantor.</li><li>Telat masuk kantor denda per menit Rp50.000, masuk jam 11.00 paling lambat 11.15.</li><li>Dilarang memakai headset.</li><li>Wajib kumpul HP setiap change shift.</li><li>Shift pagi dilarang merokok jam 19.30–22.30 dan shift malam dilarang merokok jam 23.15–01.30.</li><li>FOM deposit maksimal 5 menit.</li><li>Jangan pernah curang ketika IN/OUT atau akan ada denda.</li><li>Mistake potong Gaji & BONUS.</li><li>Jangan pernah manipulasi Doc dan bermain credit/mencuri uang kantor.</li><li>Setiap staf wajib mengikuti aturan kantor.</li></ol><div class="policy-warning">Jangan langgar aturan yang sudah ditetapkan atau akan ada konsekuensinya!</div><div class="policy-message">Selamat Bekerja Tetap Fokus — ingat ada keluarga di rumah yang harus dikasih uang tiap bulan ☺ ♥</div><div class="policy-actions"><form method="post" action="{{url_for('policy_decision')}}"><input type="hidden" name="decision" value="tidak_setuju"><button class="policy-btn decline">✕ TIDAK SETUJU</button></form><form method="post" action="{{url_for('policy_decision')}}"><input type="hidden" name="decision" value="setuju"><input type="hidden" name="next" value="{{request.full_path}}"><button class="policy-btn accept">✓ SETUJU</button></form></div></section></div>{% endif %}
+</body></html>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% block page_title %}Master Shift{% endblock %}{% block content %}
+<div class="page-head"><div><h1>Master Shift</h1><p>Tambah, edit, nonaktifkan, atau hapus shift untuk setiap kantor.</p></div></div>
+<form method="post" class="card formgrid" id="shiftForm">
+  <input type="hidden" name="id" id="shiftId">
+  <label>Kantor<select name="office_id" id="shiftOffice" required>{% for o in offices %}<option value="{{o.id}}">{{o.name}}</option>{% endfor %}</select></label>
+  <label>Nama Shift<input name="name" id="shiftName" placeholder="Contoh: Pagi 1" required></label>
+  <label>Kode<input name="code" id="shiftCode" placeholder="Contoh: P1"></label>
+  <label>Jam Mulai<input type="time" name="start_time" id="shiftStart" required></label>
+  <label>Jam Selesai<input type="time" name="end_time" id="shiftEnd" required></label>
+  <label>Status<select name="status" id="shiftStatus"><option>Aktif</option><option>Nonaktif</option></select></label>
+  <div class="form-actions span-4"><button type="button" class="btn secondary" onclick="resetShiftForm()">Batal Edit</button><button id="shiftSubmit">Simpan Shift</button></div>
+</form>
+<div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Kantor</th><th>Shift</th><th>Kode</th><th>Jam</th><th>Status</th><th>Aksi</th></tr></thead><tbody>{% for r in rows %}<tr><td>{{r.office_name}}</td><td><strong>{{r.name}}</strong></td><td>{{r.code or '-'}}</td><td>{{r.start_time}}–{{r.end_time}}</td><td><span class="badge {{'ok' if r.status=='Aktif' else 'muted'}}">{{r.status}}</span></td><td><div class="actions"><button type="button" class="btn small" onclick='editShift({{r.id}},{{r.office_id}},{{r.name|tojson}},{{(r.code or "")|tojson}},{{r.start_time|tojson}},{{r.end_time|tojson}},{{r.status|tojson}})'>Edit</button><form method="post" action="{{url_for('shift_delete',sid=r.id)}}" onsubmit="return confirm('Hapus atau nonaktifkan shift ini?')"><button class="btn small danger-btn">Hapus</button></form></div></td></tr>{% else %}<tr><td colspan="6" class="empty">Belum ada shift.</td></tr>{% endfor %}</tbody></table></div></div>
+<script>
+function editShift(id,office,name,code,start,end,status){shiftId.value=id;shiftOffice.value=office;shiftName.value=name;shiftCode.value=code;shiftStart.value=start;shiftEnd.value=end;shiftStatus.value=status;shiftSubmit.textContent='Update Shift';window.scrollTo({top:0,behavior:'smooth'});}function resetShiftForm(){shiftForm.reset();shiftId.value='';shiftSubmit.textContent='Simpan Shift';}
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Dashboard Operasional</h1><p>Pantau staf, jobdesk, izin keluar, dan form deposit dalam satu layar.</p></div>
+  <form class="filter-bar"><select name="office_id" onchange="this.form.submit()"><option value="">Semua Kantor</option>{% for o in offices %}<option value="{{o.id}}" {% if office_id==o.id %}selected{% endif %}>{{o.name}} — {{o.location}}</option>{% endfor %}</select></form>
+</div>
+<div class="cards metric-grid">
+  <div class="card metric"><span>Kantor Aktif</span><b>{{offices|length}}</b><small>Total kantor</small></div>
+  <div class="card metric"><span>Staf Aktif</span><b>{{stats.staff}}</b><small>Staf terdaftar aktif</small></div>
+  <div class="card metric green"><span>Sedang Aktif</span><b>{{stats.staff-stats.out}}</b><small>Tidak sedang izin</small></div>
+  <div class="card metric amber"><span>Sedang OUT</span><b>{{stats.out}}</b><small>Izin sementara</small></div>
+  <div class="card metric red"><span>Form Pending</span><b>{{stats.alerts}}</b><small>Lebih dari 5 menit</small></div>
+</div>
+
+<div class="section-head"><div><h2>Board Jobdesk Hari Ini</h2><p>Pembagian kerja per kantor, shift, dan kategori.</p></div>{% if g.user.role!='staff' %}<a class="btn" href="{{url_for('assignments_page')}}">Kelola Jobdesk</a>{% endif %}</div>
+{% if assignments %}
+<div class="office-board">
+{% for office in assignments|groupby('office_name') %}
+  <section class="office-section">
+    <div class="office-title"><h3>{{office.grouper}}</h3><span>{{office.list|length}} penugasan</span></div>
+    {% for shift in office.list|groupby('shift_name') %}
+    <div class="shift-block">
+      <div class="shift-title"><b>{{shift.grouper}}</b><span>{{shift.list[0].start_time}}–{{shift.list[0].end_time}}</span></div>
+      <div class="job-board">
+      {% for category in shift.list|groupby('category') %}
+        <article class="job-column">
+          <header>{{category.grouper or 'JOBDESK'}}</header>
+          <div class="job-items">
+          {% for r in category.list %}
+            <div class="job-item"><div><b>{{r.channel_name or r.target or 'Belum ada jobdesk'}}</b><span>{{r.staff_name}} · {{r.cs_name or '-'}}</span></div><span class="dot"></span></div>
+          {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+{% endfor %}
+</div>
+{% else %}<div class="card empty">Belum ada jobdesk untuk hari ini.</div>{% endif %}
+
+<section class="grid2">
+  <div class="card table-card"><div class="section-head"><h2>Izin Aktif</h2><span class="badge">{{leaves|length}} staf</span></div><div class="table-wrap"><table><thead><tr><th>Staf</th><th>CS</th><th>Kantor</th><th>Keperluan</th><th>Estimasi</th></tr></thead><tbody>{% for r in leaves %}<tr><td>{{r.name}}</td><td>{{r.cs_name or '-'}}</td><td>{{r.office_name}}</td><td><span class="badge out">{{r.reason|title}}</span></td><td>{{r.expected_at[11:16] if r.expected_at else '-'}}</td></tr>{% else %}<tr><td colspan="5" class="empty">Tidak ada staf yang sedang OUT.</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="card table-card"><div class="section-head"><h2>Form Terlambat</h2><span class="badge danger">{{alerts|length}} form</span></div><div class="table-wrap"><table><thead><tr><th>Form</th><th>Kantor</th><th>Jobdesk</th><th>Staf / CS</th></tr></thead><tbody>{% for r in alerts %}<tr><td>{{r.form_id}}</td><td>{{r.office_name or '-'}}</td><td>{{r.destination or '-'}}</td><td>{{r.staff_name or 'Belum terpetakan'}}<small>{{r.cs_name or '-'}}</small></td></tr>{% else %}<tr><td colspan="4" class="empty">Tidak ada form terlambat.</td></tr>{% endfor %}</tbody></table></div></div>
+</section>
+{% endblock %}

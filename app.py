@@ -1153,7 +1153,7 @@ def api_offices():
 def api_test_telegram():
  if not authorized(): return jsonify(ok=False,error='API key tidak valid'),401
  if not BOT_TOKEN or not ALERT_CHAT_ID: return jsonify(ok=False,error='BOT_TOKEN / ALERT_CHAT_ID belum diatur'),400
- ok=tg_send(ALERT_CHAT_ID,'✅ <b>Deposit Monitor Sync PRO</b>\nServer Railway dan Telegram terhubung.')
+ ok=tg_send(ALERT_CHAT_ID,'✅ <b>Deposit Monitor Sync PRO</b>\nServer Kemzo Tiger dan Telegram terhubung.')
  return jsonify(ok=True) if ok else (jsonify(ok=False,error='Telegram gagal mengirim pesan'),502)
 
 @app.route('/api/heartbeat',methods=['POST'])

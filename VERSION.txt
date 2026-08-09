@@ -1,1 +1,0 @@
-V30 - Deposit Row Parser: Balance Gx + Info.To Bank -> CS
